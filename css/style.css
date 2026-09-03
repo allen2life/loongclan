@@ -1,0 +1,766 @@
+/* ========================================
+   CSS Custom Properties
+   ======================================== */
+:root {
+  /* Colors */
+  --color-bg:        #0a0e17;
+  --color-text:      #e8e6e0;
+  --color-text-muted:#8a8a7a;
+  --color-gold:      #c9a050;
+  --color-gold-dim:  rgba(201, 160, 80, 0.15);
+  --color-red:       #b83a2a;
+  --color-copper:    #8d6e3f;
+  --color-card-bg:   rgba(255, 255, 255, 0.03);
+  --color-card-bg-strong: rgba(255, 255, 255, 0.05);
+  --color-gold-rgb:    201, 160, 80;
+  --color-btn-hover-text: #0a0e17;
+
+  /* Typography */
+  --font-heading-zh: "Noto Serif SC", "Source Han Serif SC", serif;
+  --font-heading-en: "Inter", -apple-system, "Helvetica Neue", sans-serif;
+  --font-body:       "Noto Sans SC", -apple-system, sans-serif;
+
+  /* Spacing */
+  --section-pad:     120px;
+  --section-pad-md:  80px;
+  --section-pad-sm:  64px;
+  --content-max:     720px;
+  --content-narrow:  520px;
+
+  /* Header */
+  --header-height:   64px;
+}
+
+/* ========================================
+   Reset
+   ======================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--color-gold);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-red);
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-bg);
+}
+
+/* ========================================
+   Typography
+   ======================================== */
+h1, h2, h3 {
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Hero main title — Chinese serif for ZH, Inter for EN */
+h1 {
+  font-family: var(--font-heading-en);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+}
+
+/* Section headings */
+h2 {
+  font-family: var(--font-heading-zh);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--color-gold);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* ========================================
+   Background Texture (chessboard grid)
+   ======================================== */
+.bg-texture {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 59px,
+      rgba(var(--color-gold-rgb), 0.025) 59px,
+      rgba(var(--color-gold-rgb), 0.025) 60px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 59px,
+      rgba(var(--color-gold-rgb), 0.025) 59px,
+      rgba(var(--color-gold-rgb), 0.025) 60px
+    );
+  animation: drift 20s ease-in-out infinite;
+}
+
+/* ========================================
+   Section Container
+   ======================================== */
+.section {
+  position: relative;
+  z-index: 1;
+  padding: var(--section-pad) 24px;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+.section--alt {
+  background: var(--color-card-bg);
+}
+
+/* ========================================
+   Corner Ornaments (L-shaped copper, 4 corners)
+   ======================================== */
+.corner-ornament {
+  position: relative;
+}
+
+.corner-ornament::before,
+.corner-ornament::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: var(--color-copper);
+  border-style: solid;
+  opacity: 0.4;
+}
+
+.corner-ornament::before {
+  top: 0;
+  left: 0;
+  border-width: 2px 0 0 2px;
+}
+
+.corner-ornament::after {
+  bottom: 0;
+  right: 0;
+  border-width: 0 2px 2px 0;
+}
+
+/* Top-right + bottom-left corners via background gradients */
+.corner-ornament {
+  background:
+    linear-gradient(to left, var(--color-copper) 2px, transparent 2px) top right / 24px 2px no-repeat,
+    linear-gradient(to bottom, var(--color-copper) 2px, transparent 2px) top right / 2px 24px no-repeat,
+    linear-gradient(to right, var(--color-copper) 2px, transparent 2px) bottom left / 24px 2px no-repeat,
+    linear-gradient(to top, var(--color-copper) 2px, transparent 2px) bottom left / 2px 24px no-repeat;
+  opacity: 0.4;
+}
+
+/* ========================================
+   Header / Navigation
+   ======================================== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--header-height);
+  transition: background 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+.header--scrolled {
+  background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(201, 160, 80, 0.1);
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.brand:hover {
+  color: var(--color-text);
+}
+
+.brand .logo {
+  width: 36px;
+  height: 36px;
+}
+
+.brand-name {
+  font-family: var(--font-heading-zh);
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  color: var(--color-gold);
+}
+
+.lang-switch {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  padding: 6px 14px;
+  border: 1px solid rgba(201, 160, 80, 0.25);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.lang-switch:hover {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
+/* Mobile menu toggle */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  position: relative;
+  z-index: 101;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--color-text);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.menu-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ========================================
+   Hero Section
+   ======================================== */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 120px 24px var(--section-pad);
+  text-align: center;
+}
+
+.hero-title {
+  font-family: var(--font-heading-en);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  color: var(--color-text);
+  letter-spacing: 0.03em;
+  margin-bottom: 1rem;
+  animation: fadeInUp 1s ease both;
+}
+
+.hero-subtitle {
+  font-family: var(--font-heading-zh);
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  color: var(--color-gold);
+  letter-spacing: 0.12em;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1s ease 0.2s both;
+}
+
+.hero-desc {
+  max-width: var(--content-narrow);
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 1.9;
+  margin-bottom: 0;
+  animation: fadeInUp 1s ease 0.4s both;
+}
+
+.hero-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--color-gold);
+  opacity: 0.4;
+  margin: 3rem auto 0;
+  animation: fadeInUp 1s ease 0.6s both;
+}
+
+/* ========================================
+   Keyframe Animations
+   ======================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(4px, 8px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* ========================================
+   Product Section
+   ======================================== */
+.product {
+  background: rgba(255, 255, 255, 0.02);
+  padding: var(--section-pad) 24px;
+}
+
+.product-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.product-logo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 2rem;
+  filter: drop-shadow(0 0 20px rgba(201, 160, 80, 0.15));
+}
+
+.product-name {
+  font-family: var(--font-heading-zh);
+  font-size: 2.5rem;
+  color: var(--color-gold);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.25rem;
+}
+
+.product-subtitle {
+  font-family: var(--font-heading-en);
+  font-size: 0.85rem;
+  color: var(--color-gold);
+  opacity: 0.5;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+.product-desc {
+  max-width: var(--content-narrow);
+  margin: 0 auto 2.5rem;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.product-features {
+  list-style: none;
+  max-width: 400px;
+  margin: 0 auto 3rem;
+  text-align: left;
+}
+
+.product-features li {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  padding: 0.35rem 0;
+  line-height: 1.6;
+}
+
+.product-features li::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--color-gold);
+  border-radius: 50%;
+  margin-right: 12px;
+  opacity: 0.5;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+/* ========================================
+   CTA Button
+   ======================================== */
+.btn-primary {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  font-family: var(--font-heading-zh);
+  font-size: 1.1rem;
+  color: var(--color-gold);
+  background: transparent;
+  border: 2px solid var(--color-gold);
+  border-radius: 4px;
+  padding: 16px 48px;
+  cursor: pointer;
+  letter-spacing: 0.15em;
+  transition: color 0.3s ease;
+}
+
+.btn-primary:hover {
+  color: var(--color-btn-hover-text);
+}
+
+/* Shine sweep (one-direction on hover, no reverse) */
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--color-gold-rgb), 0.25),
+    transparent
+  );
+}
+
+.btn-primary:hover::before {
+  animation: btnShine 0.5s ease forwards;
+}
+
+@keyframes btnShine {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Fill on hover */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold);
+  border-radius: inherit;
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.btn-primary:hover::after {
+  transform: scaleX(1);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+.btn-primary > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ========================================
+   Philosophy Section
+   ======================================== */
+.philosophy {
+  text-align: center;
+}
+
+.philosophy-body {
+  max-width: var(--content-narrow);
+  margin: 0 auto;
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 2;
+}
+
+/* ========================================
+   Team Section
+   ======================================== */
+.team-body {
+  max-width: var(--content-narrow);
+  margin: 0 auto;
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 2;
+  text-align: center;
+}
+
+/* ========================================
+   Contact Section
+   ======================================== */
+.contact-info {
+  text-align: center;
+}
+
+.contact-email {
+  font-family: var(--font-heading-en);
+  font-size: 1.1rem;
+  color: var(--color-gold);
+  transition: color 0.3s ease;
+}
+
+.contact-email:hover {
+  color: var(--color-text);
+}
+
+/* ========================================
+   Footer
+   ======================================== */
+.footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 48px 24px;
+  border-top: 1px solid rgba(201, 160, 80, 0.1);
+}
+
+.footer-text {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ========================================
+   Responsive — Tablet (< 1024px)
+   ======================================== */
+@media (max-width: 1023px) {
+  .section {
+    padding: var(--section-pad-md) 24px;
+  }
+
+  .product {
+    padding: 80px 24px;
+  }
+
+  .product-logo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .product-name {
+    font-size: 2rem;
+  }
+
+  .btn-primary {
+    padding: 14px 40px;
+    font-size: 1rem;
+  }
+}
+
+/* ========================================
+   Responsive — Mobile (< 768px)
+   ======================================== */
+@media (max-width: 767px) {
+  :root {
+    --section-pad: 64px;
+  }
+
+  .section {
+    padding: var(--section-pad-sm) 20px;
+  }
+
+  .hero {
+    min-height: 100vh;
+    padding: 100px 20px var(--section-pad-sm);
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.35rem;
+  }
+
+  .hero-desc {
+    font-size: 0.95rem;
+  }
+
+  .product {
+    padding: 64px 20px;
+  }
+
+  .product-logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .product-name {
+    font-size: 1.6rem;
+  }
+
+  .product-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .product-features {
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 14px 24px;
+    text-align: center;
+  }
+
+  h2 {
+    font-size: 1.35rem;
+  }
+
+  .philosophy-body,
+  .team-body {
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  /* ========================================
+     Mobile Navigation
+     ======================================== */
+  .menu-toggle {
+    display: flex;
+  }
+
+  .header-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 240px;
+    height: 100vh;
+    z-index: 99;
+    overflow-y: auto;
+    background: rgba(10, 14, 23, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 80px 32px 32px;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header-nav.open {
+    right: 0;
+  }
+}
+
+
+/* ========================================
+   Scroll Reveal (progressive enhancement)
+   Default: visible (no-JS / SEO fallback).
+   When .js-active is present, hide until scrolled.
+   ======================================== */
+.js-active .scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.js-active .scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger children — catch-all ensures children 6+ are visible */
+.js-active .scroll-reveal.visible > * {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* Delayed stagger for first 5 children */
+.js-active .scroll-reveal > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.js-active .scroll-reveal.visible > *:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: translateY(0); }
+.js-active .scroll-reveal.visible > *:nth-child(2) { transition-delay: 0.15s; opacity: 1; transform: translateY(0); }
+.js-active .scroll-reveal.visible > *:nth-child(3) { transition-delay: 0.25s; opacity: 1; transform: translateY(0); }
+.js-active .scroll-reveal.visible > *:nth-child(4) { transition-delay: 0.35s; opacity: 1; transform: translateY(0); }
+.js-active .scroll-reveal.visible > *:nth-child(5) { transition-delay: 0.45s; opacity: 1; transform: translateY(0); }
+
+/* ========================================
+   Accessibility — Reduced Motion
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .bg-texture {
+    animation: none;
+  }
+}
