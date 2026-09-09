@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LoongClan — Carrying Chinese Wisdom into the Digital Age</title>
-  <meta name="description" content="LoongClan brings Chinese traditional culture to the world through modern digital products. Explore Xiangqi Blast, our flagship chess tactics game.">
+  <meta name="description" content="LoongClan (loongclan.xyz) builds offline-first games and cultural apps carrying Chinese wisdom into the digital age. Explore Xiangqi Blast, Shizang, and Wenmai.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="LoongClan — Carrying Chinese Wisdom into the Digital Age">
-  <meta property="og:description" content="Within the board, a thousand-year-old chess soul. Beyond the board, the Loong soul awakens.">
+  <meta property="og:description" content="Descendants of the Loong. Local-first, user data sovereignty, zero-cost digital craftsmanship.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://loongclan.xyz/">
-  <meta property="og:image" content="https://loongclan.xyz/img/og-image.png">
+  <meta property="og:image" content="https://loongclan.xyz/img/og-logo.png">
 
-  <!-- Canonical + hreflang -->
+  <!-- Canonical & hreflang -->
   <link rel="canonical" href="https://loongclan.xyz/">
   <link rel="alternate" hreflang="en" href="https://loongclan.xyz/">
   <link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/">
@@ -22,40 +22,27 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Noto+Sans+SC:wght@300;400&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- Structured Data: WebSite + Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": ["WebSite", "Organization"],
-    "name": "LoongClan",
-    "alternateName": "龙族星域",
-    "url": "https://loongclan.xyz/",
-    "description": "Carrying Chinese wisdom into the digital age, for the world to rediscover.",
-    "email": "business@loongclan.xyz",
-    "inLanguage": "en"
-  }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <!-- Background texture -->
   <div class="bg-texture" aria-hidden="true"></div>
 
   <!-- Header -->
-  <header id="header" class="header">
+  <header class="header">
     <div class="header-inner">
       <a href="/" class="brand" aria-label="LoongClan Home">
-        <img src="img/logo_loongclan.png" alt="" class="logo" width="36" height="36">
+        <img src="img/logo_loongclan.png" alt="LoongClan Logo" class="logo">
         <span class="brand-name">LoongClan</span>
+        <span class="brand-tag">loongclan.xyz</span>
       </a>
       <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </button>
       <nav id="header-nav" class="header-nav">
+        <a href="#products">Products</a>
+        <a href="#philosophy">Philosophy</a>
+        <a href="#loongpass">LoongPass Tool</a>
+        <a href="#about">About</a>
         <a href="zh/" class="lang-switch">中文</a>
       </nav>
     </div>
@@ -63,57 +50,204 @@
 
   <main>
     <!-- Hero -->
-    <section id="hero" class="hero">
-      <h1 class="hero-title">Millennial Wisdom, <br />Converging in the Digital Age.</h1>
-      <p class="hero-subtitle">On the Loong’s Lineage, All Is Reborn.</p>
-      <p class="hero-desc">LoongClan — carrying Chinese wisdom into the digital age, for the world to rediscover.</p>
-      <div class="hero-divider" aria-hidden="true"></div>
-    </section>
-
-    <!-- Philosophy -->
-    <section id="philosophy" class="section philosophy corner-ornament scroll-reveal">
-      <h2>Our Philosophy</h2>
-      <p class="philosophy-body">Eastern culture is not a mystery. What belongs to the nation belongs to the world. LoongClan believes that thousand-year-old wisdom deserves a contemporary voice — one that resonates across borders, in a language everyone can understand.</p>
-    </section>
-
-    <!-- Product -->
-    <section id="product" class="product scroll-reveal">
-      <div class="product-inner">
-        <img src="img/logo_xiangqi_64.jpg" alt="Xiangqi Blast" class="product-logo" width="120" height="120">
-        <h2 class="product-name">Xiangqi Blast</h2>
-        <p class="product-subtitle">Xiangqi Blast</p>
-        <p class="product-desc">A solo tactical puzzle game built on Chinese chess pieces and strategic deployment. Draw, place, and unleash the Loong soul — break through enemy formations on a cosmic battlefield.</p>
-        <ul class="product-features">
-          <li>Chess Pieces &times; Abilities — Each piece type wields unique attack and defense skills</li>
-          <li>Loong Soul System — Collect souls, forge the Loong Piece, unleash devastation</li>
-          <li>Constellation Levels — 108 stages inspired by ancient Chinese star lore</li>
-        </ul>
-        <a href="https://xiangqi.loongclan.xyz/" target="_blank" rel="noopener" class="btn-primary">
-          <span>Play Now</span>
-        </a>
+    <section class="hero">
+      <div class="hero-subtitle">Descendants of the Loong · Digital Renaissance</div>
+      <h1 class="hero-title">Millennial Wisdom, <br><span>Converging in the Digital Age.</span></h1>
+      <p class="hero-desc">
+        We build a constellation of offline-first casual games and cultural tools. Grounded in Chinese heritage, engineered with modern digital craftsmanship, and operating at zero unnecessary cost.
+      </p>
+      <div class="hero-actions">
+        <a href="#products" class="btn-primary">Explore Products</a>
+        <a href="#loongpass" class="btn-secondary">Get 3-Part LoongPass</a>
       </div>
     </section>
 
-    <!-- Team -->
-    <section id="team" class="section corner-ornament scroll-reveal">
-      <h2>About Us</h2>
-      <p class="team-body">We are descendants of the Loong. With digital craftsmanship as our vessel and heartfelt passion as our compass, we dedicate ourselves to sharing Loong Culture — its wisdom, aesthetics, and spirit — with every corner of the world.</p>
+    <!-- Philosophy -->
+    <section id="philosophy" class="section scroll-reveal">
+      <div class="section-header">
+        <div class="section-tag">Operating Iron Rules</div>
+        <h2 class="section-title">Zero-Cost & Local-First Philosophy</h2>
+      </div>
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-icon">⚡</div>
+          <h3 class="pillar-title">Offline & Local First</h3>
+          <p class="pillar-desc">All games run 100% in the client. No server dependency to play, zero latency, and zero server outage risks.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">🔑</div>
+          <h3 class="pillar-title">3-Part Passphrase</h3>
+          <p class="pillar-desc">No emails, phone numbers, or passwords. A lightweight <code>part1.part2.part3</code> token deterministically derives your unique identity.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">🛡️</div>
+          <h3 class="pillar-title">User Data Sovereignty</h3>
+          <p class="pillar-desc">Following the Obsidian paradigm: users own their data. Server only acts as a transparent relay. Export or purge anytime with zero vendor lock-in.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">🌐</div>
+          <h3 class="pillar-title">Universal & Portable</h3>
+          <p class="pillar-desc">Shared Sync and Leaderboard APIs deployed globally on Cloudflare Edge at $0/month, fully portable to standalone self-hosted instances.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">🌍</div>
+          <h3 class="pillar-title">English-First Global UI</h3>
+          <p class="pillar-desc">All app interfaces default to English with instant Chinese toggle. Welcoming global audiences to experience Eastern wisdom with zero language friction.</p>
+        </div>
+      </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact" class="section scroll-reveal">
-      <h2>Contact</h2>
-      <div class="contact-info">
-        <a href="mailto:business@loongclan.xyz" class="contact-email">business@loongclan.xyz</a>
+    <!-- Products Matrix -->
+    <section id="products" class="section scroll-reveal">
+      <div class="section-header">
+        <div class="section-tag">Product Constellation</div>
+        <h2 class="section-title">Chinese Cultural Games & Apps</h2>
+      </div>
+      <div class="products-grid">
+        <!-- Xiangqi Blast -->
+        <div class="product-card">
+          <div>
+            <div class="product-badge">Flagship Tactical Game</div>
+            <h3 class="product-name">Xiangqi Blast · 棋阵风暴</h3>
+            <div class="product-subtitle">Chinese Chess Tactics & Cosmic Constellations</div>
+            <p class="product-desc">
+              A solo tactical rogue-lite puzzle game built on Chinese chess pieces and deployment strategy. Collect souls, forge the Loong piece, and conquer 108 star stages.
+            </p>
+            <div class="product-tags">
+              <span>Solo Tactics</span>
+              <span>WASM Engine</span>
+              <span>Loong Souls</span>
+              <span>108 Stages</span>
+            </div>
+          </div>
+          <a href="https://xiangqi.loongclan.xyz/" target="_blank" rel="noopener" class="btn-play">
+            Play Xiangqi Blast ↗
+          </a>
+        </div>
+
+        <!-- Shizang -->
+        <div class="product-card">
+          <div>
+            <div class="product-badge">Classical Poetry Puzzle</div>
+            <h3 class="product-name">Shizang · 诗藏</h3>
+            <div class="product-subtitle">Word-Crafting in Ancient Rhymes</div>
+            <p class="product-desc">
+              Daily Chinese poetry word deduction. Experience the exquisite art of "炼字" (word crafting) by Wang Anshi, Su Shi, and Li Bai. Deep cultural commentary unlocked upon completion.
+            </p>
+            <div class="product-tags">
+              <span>Daily Puzzle</span>
+              <span>Tang & Song Poetry</span>
+              <span>Tone Clues</span>
+              <span>Word Craft</span>
+            </div>
+          </div>
+          <a href="https://words.loongclan.xyz/?mode=shizang" target="_blank" rel="noopener" class="btn-play">
+            Play Shizang ↗
+          </a>
+        </div>
+
+        <!-- Wenmai -->
+        <div class="product-card">
+          <div>
+            <div class="product-badge">Cultural Association</div>
+            <h3 class="product-name">Wenmai · 文脉</h3>
+            <div class="product-subtitle">Heritage Imagery & Lineage Connections</div>
+            <p class="product-desc">
+              Connect 16 cultural vocabulary items into 4 thematic dimensions. Trace the continuity of Chinese philosophical schools, ancient instruments, and timeless metaphors.
+            </p>
+            <div class="product-tags">
+              <span>Cultural Associations</span>
+              <span>4-Group Deduction</span>
+              <span>Four Tiers</span>
+              <span>Exegesis</span>
+            </div>
+          </div>
+          <a href="https://words.loongclan.xyz/?mode=wenmai" target="_blank" rel="noopener" class="btn-play">
+            Play Wenmai ↗
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- LoongPass Tool -->
+    <section id="loongpass" class="section scroll-reveal">
+      <div class="section-header">
+        <div class="section-tag">Identity & Sync Utility (SPEC_IDENTITY v1.1.0)</div>
+        <h2 class="section-title">3-Part LoongPass Generator & Dual-Hash Verifier</h2>
+      </div>
+      <div class="pass-tool-box">
+        <p style="text-align: center; color: var(--color-text-dim); margin-bottom: 20px; line-height: 1.6;">
+          Your 3-part passphrase serves as your universal sync secret key across all LoongClan applications.<br>
+          It runs 100% locally in your browser. Dual hashes (UserHash & SyncToken) are derived deterministically via SHA-256.
+        </p>
+
+        <div class="pass-input-row">
+          <input type="password" id="pass-k1" class="pass-input" maxlength="8" placeholder="loong" autocomplete="off">
+          <span class="pass-dot">.</span>
+          <input type="password" id="pass-k2" class="pass-input" maxlength="8" placeholder="888" autocomplete="off">
+          <span class="pass-dot">.</span>
+          <input type="password" id="pass-k3" class="pass-input" maxlength="8" placeholder="abc" autocomplete="off">
+          <button id="btn-toggle-input-mask" class="pass-eye-btn" title="Toggle password mask" type="button">👁️</button>
+        </div>
+
+        <div id="pass-display-box" class="pass-display-box" style="display: none;">
+          <div>
+            <span class="pass-display-title">Masked Passphrase:</span>
+            <span id="pass-display-kouling" class="pass-display-val"></span>
+          </div>
+          <button id="btn-toggle-display-mask" class="pass-eye-btn" title="Toggle full plaintext" type="button" style="padding: 4px 8px; font-size: 0.9rem;">👁️</button>
+        </div>
+
+        <div class="pass-actions">
+          <button id="btn-gen-pass" class="btn-secondary" style="padding: 8px 18px; font-size: 0.9rem;">🎲 Generate Random</button>
+          <button id="btn-copy-pass" class="btn-primary" style="padding: 8px 18px; font-size: 0.9rem;">📋 Copy Passphrase</button>
+        </div>
+
+        <div id="pass-status" class="pass-status pass-idle">Loading tool...</div>
+
+        <div class="pass-hash-grid">
+          <div id="pass-hash-container" class="pass-hash-box" style="display: none;">
+            <div class="pass-hash-title">Derived 64-Hex UserHash (Public Identifier / Leaderboard Key):</div>
+            <div id="pass-hash-output" class="pass-hash-val"></div>
+          </div>
+          <div id="pass-token-container" class="pass-hash-box pass-token-box" style="display: none;">
+            <div class="pass-hash-title">Derived 64-Hex SyncToken (Private Auth Token / Kept Secret):</div>
+            <div id="pass-token-output" class="pass-token-val"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section scroll-reveal">
+      <div class="section-header">
+        <div class="section-tag">Our Vision</div>
+        <h2 class="section-title">Descendants of the Loong</h2>
+      </div>
+      <div style="max-width: 760px; margin: 0 auto; text-align: center; color: var(--color-text-dim); line-height: 2;">
+        <p>
+          We are the descendants of the Loong. Eastern heritage is not an archaic curiosity — what belongs to the nation belongs to the world.
+        </p>
+        <p>
+          By embracing lightweight serverless architectures, offline-first computing, and user-centric data sovereignty, we demonstrate that premium cultural digital experiences can thrive with zero operational friction.
+        </p>
       </div>
     </section>
   </main>
 
   <!-- Footer -->
-  <footer class="footer">
-    <p class="footer-text">&copy; 2026 LoongClan. All rights reserved.</p>
+  <footer>
+    <div class="footer-links">
+      <a href="https://loongclan.xyz/">Home</a>
+      <a href="https://xiangqi.loongclan.xyz/">Xiangqi Blast</a>
+      <a href="https://words.loongclan.xyz/">Shizang & Wenmai</a>
+      <a href="https://api.loongclan.xyz/">API Health</a>
+      <a href="zh/">简体中文</a>
+    </div>
+    <p>&copy; 2026 LoongClan (loongclan.xyz). Preserving Chinese Heritage through Digital Craftsmanship.</p>
   </footer>
 
+  <script src="js/kouling-tool.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
