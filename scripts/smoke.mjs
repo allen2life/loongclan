@@ -111,9 +111,16 @@ async function main() {
       '/docs/SPEC_IDENTITY.md'
     ];
     for (const p of forbidden) {
-      // 附加随机参数绕过 CDN 缓存，检测真实源状态
-      const { res } = await fetchText(SITE + p + '?cb=' + Math.random().toString(36).slice(2));
-      ok(`${p} 不可公开访问`, res.status === 404, `status=${res.status}`);
+      // a) 源站真实状态：附加随机参数绕过 CDN 缓存
+      const bust = await fetchText(SITE + p + '?cb=' + Math.random().toString(36).slice(2));
+      ok(`[源站] ${p} 已移除`, bust.res.status === 404, `status=${bust.res.status}`);
+
+      // b) 边缘缓存状态：不带参数，反映真实用户会看到什么。
+      //    历史泄漏对象可能滞留在个别 PoP，靠 s-maxage 自然过期。
+      const edge = await fetchText(SITE + p);
+      if (edge.res.status !== 404) {
+        console.log(`  ! [边缘] ${p} 仍返回 ${edge.res.status}（陈旧缓存，待自然过期）`);
+      }
     }
   }
 
