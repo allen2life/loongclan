@@ -41,7 +41,21 @@ jobs:
           echo "zone_id=${ZONE_ID}" >> "$GITHUB_OUTPUT"
           echo "zone: ${ZONE_NAME} -> ${ZONE_ID}"
 
+      - name: Purge by cache tags
+        if: inputs.everything == 'false' && inputs.urls == 'TAGS'
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ZONE_ID: ${{ steps.zone.outputs.zone_id }}
+        run: |
+          set -euo pipefail
+          RESP=$(curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CF_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data '{"tags":["*"]}')
+          echo "$RESP" | jq .
+
       - name: Purge cache
+        if: inputs.urls != 'TAGS'
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           ZONE_ID: ${{ steps.zone.outputs.zone_id }}
@@ -66,3 +80,17 @@ jobs:
             exit 1
           fi
           echo "✅ 缓存已清理"
+
+      - name: Verify sensitive paths
+        env:
+          ZONE_NAME: ${{ inputs.zone }}
+        run: |
+          set -euo pipefail
+          echo "自检敏感路径（期望 404）："
+          for p in /README.md /package.json /server/src/auth/kouling.ts /scripts/publish.mjs /docs/SPEC_IDENTITY.md /sdk/ts/LoongIdentity.ts; do
+            CODE=$(curl -sS -o /dev/null -w '%{http_code}' "https://${ZONE_NAME}${p}")
+            echo "  ${CODE}  ${p}"
+            if [ "$CODE" = "200" ]; then
+              echo "::warning::${p} 仍返回 200（可能为边缘陈旧缓存）"
+            fi
+          done
