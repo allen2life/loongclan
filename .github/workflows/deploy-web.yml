@@ -19,6 +19,9 @@ jobs:
       # 安全红线：只允许发布 website/ 目录。
       # 绝不回退到仓库根目录 —— 否则 server/、docs/、scripts/ 等源码会作为
       # 静态资源被公开访问（历史事故：deploy.yml 用 `pages deploy .`）。
+      - name: Test edge guard
+        run: node test/worker.test.mjs
+
       - name: Verify publish directory
         run: |
           if [ ! -f website/index.html ]; then
