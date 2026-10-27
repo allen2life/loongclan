@@ -430,6 +430,23 @@ body {
   font-weight: 600;
 }
 
+/* 未上线产品：禁用态按钮，避免指向不存在的子域名造成死链 */
+.btn-play--soon {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: rgba(255, 255, 255, 0.03);
+  border-style: dashed;
+  color: var(--color-text-dim);
+  font-size: 0.88rem;
+  letter-spacing: 0.5px;
+}
+
+.btn-play--soon:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-text-dim);
+  font-weight: 500;
+}
+
 /* LoongPass Tool Widget */
 .pass-tool-box {
   background: var(--color-card-bg);

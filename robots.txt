@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /img/
 
 Sitemap: https://loongclan.xyz/sitemap.xml

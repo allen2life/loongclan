@@ -1,0 +1,35 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "loongclan-server",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-02-24",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "routes": [
+    {
+      "pattern": "api.loongclan.xyz",
+      "custom_domain": true
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "loongclan_db",
+      "database_id": "dce5c695-df10-4920-8914-cce444752fac"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ADMIN_USERNAME": "admin",
+    "ALLOWED_ORIGINS": "https://loongclan.xyz,https://www.loongclan.xyz,https://xiangqi.loongclan.xyz,https://words.loongclan.xyz,http://localhost:5173,http://localhost:3000,http://localhost:8787",
+    "ALLOW_PLAINTEXT_KOULING": "false",
+    "RATE_LIMIT_SYNC_PER_MIN": "60",
+    "RATE_LIMIT_SUBMIT_PER_MIN": "20",
+    "RANK_SUBMIT_MIN_INTERVAL_SEC": "5",
+    "RANK_MAX_ABS_SCORE": "1000000000"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

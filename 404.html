@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Page Not Found · LoongClan</title>
+  <meta name="robots" content="noindex">
+  <meta name="description" content="The page you are looking for does not exist on loongclan.xyz.">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .nf-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+      gap: 18px;
+    }
+    .nf-code {
+      font-family: var(--font-mono);
+      font-size: clamp(4rem, 14vw, 8rem);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--color-gold), var(--color-dragon-red));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 4px;
+    }
+    .nf-title { font-size: clamp(1.2rem, 3vw, 1.8rem); margin: 0; }
+    .nf-desc {
+      max-width: 520px;
+      color: var(--color-text-dim);
+      line-height: 1.8;
+      margin: 0;
+    }
+    .nf-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="bg-texture" aria-hidden="true"></div>
+  <main class="nf-wrap">
+    <div class="nf-code">404</div>
+    <h1 class="nf-title">This path has drifted beyond the clouds.</h1>
+    <p class="nf-desc">
+      The page you requested does not exist on loongclan.xyz.<br>
+      Perhaps the constellation has rearranged — let us guide you back.
+    </p>
+    <div class="nf-actions">
+      <a href="/" class="btn-primary">Back to Home</a>
+      <a href="/zh/" class="btn-secondary">返回中文首页</a>
+    </div>
+  </main>
+</body>
+</html>

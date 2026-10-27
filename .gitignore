@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Cloudflare & Wrangler
+.wrangler/
+.mf/
+
+# Build outputs
+dist/
+build/
+tmp/
+*.log
+
+# Databases & Local storage
+*.db
+*.sqlite
+*.sqlite3
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example

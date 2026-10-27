@@ -1,0 +1,44 @@
+name: Deploy Website to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - 'index.html'
+      - 'zh/**'
+      - 'css/**'
+      - 'js/**'
+      - 'img/**'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # 兼容两种仓库布局：
+      #   A) website/ 子目录（本仓库规范布局）
+      #   B) 仓库根目录即站点（历史布局）
+      - name: Select publish directory
+        id: pick
+        run: |
+          if [ -f website/index.html ]; then
+            echo "dir=website" >> "$GITHUB_OUTPUT"
+          elif [ -f index.html ]; then
+            echo "dir=." >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::找不到网站入口 index.html"
+            exit 1
+          fi
+
+      - name: Publish
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ${{ steps.pick.outputs.dir }} --project-name=loongclan --branch main
