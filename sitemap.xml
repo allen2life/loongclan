@@ -26,30 +26,30 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://loongclan.xyz/privacy.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/privacy.html"/>
-    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/privacy.html"/>
+    <loc>https://loongclan.xyz/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/privacy"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/privacy"/>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://loongclan.xyz/zh/privacy.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/privacy.html"/>
-    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/privacy.html"/>
+    <loc>https://loongclan.xyz/zh/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/privacy"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/privacy"/>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://loongclan.xyz/terms.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/terms.html"/>
-    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/terms.html"/>
+    <loc>https://loongclan.xyz/terms</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/terms"/>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://loongclan.xyz/zh/terms.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/terms.html"/>
-    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/terms.html"/>
+    <loc>https://loongclan.xyz/zh/terms</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/terms"/>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
