@@ -5,6 +5,9 @@ name: Purge Cloudflare Cache
 # 而不必等待 max-age=604800（7 天）自然过期。
 
 on:
+  # 每日自动清理一次，逐出可能滞留的边缘缓存对象
+  schedule:
+    - cron: '17 4 * * *'
   workflow_dispatch:
     inputs:
       zone:
@@ -28,7 +31,8 @@ jobs:
         id: zone
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          ZONE_NAME: ${{ inputs.zone }}
+          # schedule 触发时 inputs 为空，回退到默认域名
+          ZONE_NAME: ${{ inputs.zone || 'loongclan.xyz' }}
         run: |
           set -euo pipefail
           ZONE_ID=$(curl -sS -X GET "https://api.cloudflare.com/client/v4/zones?name=${ZONE_NAME}" \
@@ -59,7 +63,7 @@ jobs:
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           ZONE_ID: ${{ steps.zone.outputs.zone_id }}
-          EVERYTHING: ${{ inputs.everything }}
+          EVERYTHING: ${{ inputs.everything || 'true' }}
           URLS: ${{ inputs.urls }}
         run: |
           set -euo pipefail
@@ -83,7 +87,7 @@ jobs:
 
       - name: Verify sensitive paths
         env:
-          ZONE_NAME: ${{ inputs.zone }}
+          ZONE_NAME: ${{ inputs.zone || 'loongclan.xyz' }}
         run: |
           set -euo pipefail
           echo "自检敏感路径（期望 404）："
