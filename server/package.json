@@ -9,7 +9,7 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "start:node": "node --experimental-strip-types src/node.ts",
-    "test": "node --experimental-strip-types test/api.test.ts"
+    "test": "node --experimental-strip-types test/api.test.ts && node --experimental-strip-types test/migration.test.ts"
   },
   "dependencies": {
     "hono": "^4.13.7"

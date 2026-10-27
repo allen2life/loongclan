@@ -14,17 +14,16 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-// ── 数据表结构自愈（幂等，进程内只跑一次） ──
-let columnsEnsured = false;
+// ── 数据表结构自愈（幂等；用 Promise 缓存保证并发请求共享同一次迁移） ──
+let schemaReady: Promise<void> | null = null;
 app.use('*', async (c, next) => {
-  if (!columnsEnsured) {
-    columnsEnsured = true;
-    try {
-      await new D1Store(c.env.DB).ensureColumns();
-    } catch {
-      // 迁移失败不阻断请求，UPDATE 路径另有兼容兜底
-    }
+  if (!schemaReady) {
+    schemaReady = new D1Store(c.env.DB).ensureColumns().catch(() => {
+      // 迁移失败时清空缓存，下个请求重试
+      schemaReady = null;
+    });
   }
+  await schemaReady;
   await next();
 });
 

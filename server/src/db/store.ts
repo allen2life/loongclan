@@ -66,21 +66,43 @@ export class D1Store {
   /**
    * 幂等补齐历史库缺失的列。
    *
-   * 背景：`rank_scores.updated_at` 是 submitScore UPDATE 路径依赖的列，
-   * 但早期建表语句遗漏了它。SQLite 的 ADD COLUMN 不支持 IF NOT EXISTS，
-   * 因此先查 PRAGMA table_info，缺列时才 ALTER，且容忍并发重复执行。
+   * 背景：线上早期建表语句与当前代码存在漂移，缺失列会导致运行期 SQL 报错
+   * （如 rank_scores.updated_at 缺失 → 刷新成绩 500）。
+   * SQLite 的 ADD COLUMN 不支持 IF NOT EXISTS，因此先查 PRAGMA table_info，
+   * 缺列时才 ALTER，并容忍并发重复执行。
    */
+  private static readonly REQUIRED_COLUMNS: Record<string, Array<[string, string]>> = {
+    rank_scores: [['updated_at', 'INTEGER NOT NULL DEFAULT 0']],
+    sync_snapshots: [
+      ['sync_token', "TEXT NOT NULL DEFAULT ''"],
+      ['nickname', "TEXT NOT NULL DEFAULT ''"],
+      ['version', 'INTEGER NOT NULL DEFAULT 1'],
+      ['client_version', "TEXT NOT NULL DEFAULT ''"],
+      ['snapshot_at', "TEXT NOT NULL DEFAULT ''"],
+      ['payload', "TEXT NOT NULL DEFAULT '{}'"],
+      ['size', 'INTEGER NOT NULL DEFAULT 0'],
+      ['updated_at', 'INTEGER NOT NULL DEFAULT 0'],
+      ['created_at', 'INTEGER NOT NULL DEFAULT 0']
+    ]
+  };
+
   async ensureColumns(): Promise<void> {
-    try {
-      const info = await this.db.prepare('PRAGMA table_info(rank_scores)').all();
-      const cols = (info.results || []).map((r: any) => String(r.name));
-      if (cols.length > 0 && !cols.includes('updated_at')) {
-        await this.db
-          .prepare('ALTER TABLE rank_scores ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0')
-          .run();
+    for (const [table, cols] of Object.entries(D1Store.REQUIRED_COLUMNS)) {
+      try {
+        const info = await this.db.prepare(`PRAGMA table_info(${table})`).all();
+        const existing = new Set((info.results || []).map((r: any) => String(r.name)));
+        if (existing.size === 0) continue; // 表不存在，由 schema.sql 负责建表
+        for (const [name, ddl] of cols) {
+          if (existing.has(name)) continue;
+          try {
+            await this.db.prepare(`ALTER TABLE ${table} ADD COLUMN ${name} ${ddl}`).run();
+          } catch {
+            // 并发 ALTER 重复执行，忽略
+          }
+        }
+      } catch {
+        // 该表不可读，跳过
       }
-    } catch {
-      // 权限受限或并发执行，忽略；查询路径有兜底
     }
   }
 
