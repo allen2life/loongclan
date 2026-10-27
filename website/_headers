@@ -1,0 +1,50 @@
+# Cloudflare Pages 响应头配置
+# 目的：
+#   1. 强制敏感路径不被缓存，避免历史泄漏内容残留在边缘节点
+#   2. 为全站补上基础安全响应头
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Access-Control-Allow-Origin: *
+
+# 源码与内部文档绝不应作为静态资源存在；即便将来误发布也立即失效
+/README.md
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex
+
+/docs/*
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex
+
+/server/*
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex
+
+/sdk/*
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex
+
+/scripts/*
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex
+
+/package.json
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex
+
+/.gitignore
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex
+
+# HTML 保持短缓存，便于快速发布生效
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/zh/
+  Cache-Control: public, max-age=0, must-revalidate
