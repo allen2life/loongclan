@@ -44,15 +44,23 @@
 ## 三、 代码库全景目录
 
 ```
-y:\sites\loongclan\
+loongclan/
+├── .github\workflows\                 # 自动驾驶发布 (GitHub Actions)
+│   ├── deploy-web.yml                 # 官网 → Cloudflare Pages
+│   └── deploy-api.yml                 # 后端 → Cloudflare Workers (先跑测试再发布)
 ├── docs\                              # 平台技术规范与文档
 │   ├── SPEC_IDENTITY.md               # 三维口令轻量身份体系算法规范 (TS/Go/C++ 实现)
 │   ├── SPEC_SYNC.md                   # 通用数据同步协议规范 (Obsidian 范式快照)
 │   ├── SPEC_RANK.md                   # 通用排行榜协议规范 (日榜/周榜/多维度)
+│   ├── SPEC_I18N.md                   # 多语言与英语优先界面规范
+│   ├── OPERATIONS_PLAN.md             # 研发 / 运营 / 发布计划
 │   └── DEPLOYMENT.md                  # 部署指南 (Cloudflare Workers 与独立私有化)
+├── scripts\                           # 运维脚本
+│   ├── smoke.mjs                      # 线上巡检 (25 项端到端检查)
+│   └── publish.mjs                    # 通过 GitHub API 发布（绕开被阻断的 git 传输）
 ├── sdk\                               # 客户端通用 SDK
 │   └── ts\                            # TypeScript SDK
-│       ├── LoongIdentity.ts           # 口令校验、生成与 FNV-1a 哈希计算
+│       ├── LoongIdentity.ts           # 口令校验、生成与 SHA-256 双重哈希派生
 │       ├── LoongSyncClient.ts         # 数据上传、下载、元数据比对、导出与注销
 │       ├── LoongRankClient.ts         # 成绩上传与排行榜查询客户端
 │       ├── types.ts                   # 共享类型定义
@@ -65,9 +73,10 @@ y:\sites\loongclan\
 │   │   ├── routes\sync.ts             # 通用同步 API (/api/v1/sync/*)
 │   │   ├── routes\rank.ts             # 通用排行榜 API (/api/v1/rank/*)
 │   │   ├── routes\admin.ts            # 管理控制台接口 (/api/admin/*)
+│   │   ├── security\limits.ts         # 限流、极值阈值与参数校验
 │   │   ├── index.ts                   # Workers 入口与嵌入式管理界面
 │   │   └── node.ts                    # 本地独立模式服务器入口
-│   ├── test\                          # 自动化测试套件 (全链路 34 项测试通过)
+│   ├── test\                          # 自动化测试 (api 72 项 + migration 17 项 = 89 项)
 │   ├── wrangler.jsonc                 # Cloudflare 配置文件
 │   └── package.json
 └── website\                           # 龙族官网门户 (loongclan.xyz)
@@ -78,6 +87,7 @@ y:\sites\loongclan\
     │   ├── main.js                    # 响应式导航与微动效
     │   └── kouling-tool.js            # 网页端三维通行证生成与换算工具
     ├── img\                           # 视觉资产与徽标
+    ├── 404.html                       # 未命中路径兜底页
     ├── robots.txt
     └── sitemap.xml
 ```
@@ -129,18 +139,41 @@ node --experimental-strip-types src/node.ts
 ```
 访问 `http://localhost:8787/admin/` 即可进入内置的**龙族控制台**。
 
-### 3. 服务端线上发布 (Cloudflare)
+### 3. 线上发布（自动 · 推荐）
+推送即发布。GitHub Actions 会按改动路径自动选择部署目标：
+
+| 改动路径 | 触发工作流 | 部署目标 |
+| :--- | :--- | :--- |
+| `website/**` | `deploy-web.yml` | Cloudflare Pages 项目 `loongclan` |
+| `server/**` | `deploy-api.yml` | Cloudflare Workers `loongclan-server`（先跑 89 项测试，再 `wrangler deploy` 并幂等建表） |
+
+所需仓库 Secrets：`CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID`。
+
+```bash
+git add -A && git commit -m "feat: ..."
+node scripts/publish.mjs "feat: ..."   # 本机 git 传输被阻断，改用 GitHub API 发布
+```
+
+### 4. 发布后巡检
+```bash
+node scripts/smoke.mjs   # 25 项线上端到端检查（官网/404/零明文/同步/排行/注销）
+```
+
+### 5. 手动发布（备用）
 ```bash
 cd server
-wrangler d1 execute loongclan_db --remote --file=src/db/schema.sql
-wrangler deploy
+npx wrangler d1 execute loongclan_db --remote --file=src/db/schema.sql --yes
+npx wrangler deploy
 ```
 
 ---
 
 ## 五、 产品矩阵一览
 
-- **《棋阵风暴》(Xiangqi Blast)**：象棋战术与星宿残局单机策略（[xiangqi.loongclan.xyz](https://xiangqi.loongclan.xyz/)）
-- **《诗藏》(Shizang)**：经典诗词炼字与推敲解谜（[words.loongclan.xyz/?mode=shizang](https://words.loongclan.xyz/?mode=shizang)）
-- **《文脉》(Wenmai)**：华夏文化意象连线与归纳（[words.loongclan.xyz/?mode=wenmai](https://words.loongclan.xyz/?mode=wenmai)）
-- **龙族通行证 (LoongPass)**：跨应用三维口令离线通行工具（集成于 [loongclan.xyz](https://loongclan.xyz/) 官网首页）
+| 产品 | 说明 | 线上地址 | 状态 |
+| :--- | :--- | :--- | :--- |
+| **《棋阵风暴》** Xiangqi Blast | 象棋战术与星宿残局单机策略 | [xiangqi.loongclan.xyz](https://xiangqi.loongclan.xyz/) | ✅ 已上线 |
+| **《半纸诗声》** Half-Page Verse | 诗词卡片打印 + 声律伴读 | [hp.loongclan.xyz](https://hp.loongclan.xyz/) | ✅ 已上线 |
+| **《诗藏》** Shizang | 经典诗词炼字与推敲解谜 | — | 🚧 研发中 |
+| **《文脉》** Wenmai | 华夏文化意象连线与归纳 | — | 🚧 研发中 |
+| **龙族通行证** LoongPass | 跨应用三维口令离线通行工具 | [loongclan.xyz](https://loongclan.xyz/) 首页内嵌 | ✅ 已上线 |

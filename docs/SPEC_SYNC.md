@@ -37,6 +37,18 @@
 > 1. 所有 API 交互**严禁传输口令原文**，客户端仅传输散列后的密文（`userHash` 作为公开身份，`syncToken` 作为私密鉴权凭证）。服务端绝不接收、绝不存储明文口令！  
 > 2. 客户端计算 `userHash` 与 `syncToken` 时，**必须统一使用标准 UTF-8 字节流（即 `new TextEncoder().encode(input)`）**，以保证包含汉字、任意符号与 Emoji 的同一口令在任何设备、任何平台上算出的 Hash 严格绝对一致。
 
+> **服务端零明文强制（v1.1.0 起默认生效）**：  
+> 所有同步端点默认**拒绝**任何 `kouling` 字段，返回 `400 plaintext_kouling_rejected`。  
+> 如需在迁移期临时兼容旧客户端，可显式设置环境变量 `ALLOW_PLAINTEXT_KOULING=true`；此时服务端仅在内存中即时派生，绝不落库原文。生产环境必须保持 `false`。
+>
+> **鉴权矩阵**：`/upload`、`/download`、`/export`、`/purge`、`/meta` 均要求有效 `syncToken`（`/meta` 曾为公开接口，已收紧）。
+>
+> **限流**：同步接口默认单 IP 每分钟 60 次（`RATE_LIMIT_SYNC_PER_MIN` 可覆盖）。
+>
+> **体积上限**：单条快照 payload 上限 1 MiB，超出返回 `413 payload_too_large`。
+>
+> **参数校验**：`appId` 必须匹配 `^[a-zA-Z0-9_-]{1,32}$`。
+
 所有请求均采用 `application/json` 格式交互。
 
 ### 2.1 上传数据快照 (Upload Snapshot)

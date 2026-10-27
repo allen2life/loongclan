@@ -70,38 +70,45 @@ wrangler pages deploy website --project-name=loongclan-website
 
 适用于小游戏作者希望完全自主托管专属数据后端、或者在离线私有网络中独立运行的场景。
 
-### 2.1 本地或 VPS Node/Bun 单机运行
-服务基于 Hono 编写，提供对标准本地 SQLite（`better-sqlite3` 或内置轻量驱动）的直接适配：
+### 2.1 本地或 VPS Node 单机运行
+服务基于 Hono 编写，借助 Node.js 内置 `node:sqlite`（Node ≥ 22）直接挂载本地单文件数据库，
+**无需任何编译步骤**：
 ```bash
 cd server
 npm install
-npm run build:node
-npm run start:node
+npm run start:node      # 等价于 node --experimental-strip-types src/node.ts
 ```
 此时服务将监听 `0.0.0.0:8787`，并在当前目录自动生成 `loongclan.db` 单文件数据库。
+
+> 说明：本项目源码为 TypeScript，通过 Node 原生类型剥离（`--experimental-strip-types`）直接运行，
+> 不存在 `build:node` 构建产物或 `dist/` 目录。管理控制台为运行时内嵌 HTML，也不存在独立的 `admin/` 目录。
+
+可选环境变量：
+| 变量 | 默认值 | 说明 |
+| :--- | :--- | :--- |
+| `PORT` | `8787` | 监听端口 |
+| `SQLITE_PATH` | `./loongclan.db` | 数据库文件路径 |
+| `ADMIN_KEY` | `loongclan_admin_888` | 管理后台密码（**生产环境必须覆盖**） |
 
 ### 2.2 Docker 一键部署
 项目提供微型 Dockerfile：
 ```dockerfile
-FROM node:20-alpine AS builder
+# Node 22+ 才能使用内置 node:sqlite 与 --experimental-strip-types
+FROM node:22-alpine
 WORKDIR /app
-COPY package*.json tsconfig.json ./
-RUN npm ci
-COPY src ./src
-COPY admin ./admin
-RUN npm run build:node
 
-FROM node:20-alpine
-WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/admin ./admin
+
+# 直接拷贝源码运行，无构建阶段
+COPY src ./src
+
 ENV PORT=8080
 ENV SQLITE_PATH=/data/loongclan.db
 VOLUME /data
 EXPOSE 8080
-CMD ["node", "dist/node.js"]
+
+CMD ["node", "--experimental-strip-types", "src/node.ts"]
 ```
 
 使用 Docker 运行：

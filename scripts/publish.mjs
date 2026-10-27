@@ -33,11 +33,14 @@ function ghApi(method, path, body, attempt = 0) {
     const out = execFileSync('gh', args, opts);
     return out.trim() ? JSON.parse(out) : {};
   } catch (e) {
-    const transient = /TLS handshake timeout|i\/o timeout|connection reset|502|503|504|unexpected EOF|net\/http/i
-      .test(String(e.stderr || e.message || ''));
-    if (transient && attempt < 6) {
-      const wait = Math.min(15000, 800 * Math.pow(2, attempt));
-      console.log(`  … 网络抖动，${wait}ms 后重试 (${attempt + 1}/6)`);
+    const msg = String(e.stderr || e.message || '');
+    const transient = /TLS handshake timeout|i\/o timeout|connection reset|502|503|504|unexpected EOF|net\/http/i.test(msg)
+      // GitHub 的 git-data 对象存在最终一致性延迟：刚创建的 tree/commit 可能短暂 422/404
+      || (/Tree SHA does not exist|Object does not exist|Not Found|\(HTTP 422\)|\(HTTP 404\)/i.test(msg)
+          && /git\/(trees|commits|refs)/i.test(path));
+    if (transient && attempt < 8) {
+      const wait = Math.min(20000, 1000 * Math.pow(1.8, attempt));
+      console.log(`  … 等待对象传播，${wait}ms 后重试 (${attempt + 1}/8)`);
       execFileSync('sleep', [String(wait / 1000)]);
       return ghApi(method, path, body, attempt + 1);
     }
@@ -54,6 +57,20 @@ function ghApi(method, path, body, attempt = 0) {
 function mapRemotePath(localPath) {
   if (localPath.startsWith('website/')) return localPath.slice('website/'.length);
   return localPath;
+}
+
+/** 轮询直到对象可稳定读取（应对 GitHub git-data 的最终一致性） */
+async function waitFor(fn, label, tries = 10) {
+  for (let i = 0; i < tries; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (i === tries - 1) throw e;
+      const wait = Math.min(8000, 500 * Math.pow(1.6, i));
+      console.log(`  … 等待 ${label} 可用，${Math.round(wait)}ms (${i + 1}/${tries})`);
+      execFileSync('sleep', [String(wait / 1000)]);
+    }
+  }
 }
 
 function listTrackedFiles() {
@@ -122,7 +139,10 @@ async function main() {
   });
   console.log(`\n树已创建：${newTree.sha.slice(0, 8)}（${tree.length} 个条目）`);
 
-  // 4) 创建提交
+  // 4) 等待 tree 可被引用（GitHub git-data 存在最终一致性延迟）
+  await waitFor(() => ghApi('GET', `repos/${OWNER}/${REPO}/git/trees/${newTree.sha}`), 'tree');
+
+  // 5) 创建提交
   const commit = ghApi('POST', `repos/${OWNER}/${REPO}/git/commits`, {
     message,
     tree: newTree.sha,
@@ -130,7 +150,8 @@ async function main() {
   });
   console.log(`提交已创建：${commit.sha.slice(0, 8)}`);
 
-  // 5) 快进分支
+  // 6) 等待 commit 可被引用，再快进分支
+  await waitFor(() => ghApi('GET', `repos/${OWNER}/${REPO}/git/commits/${commit.sha}`), 'commit');
   ghApi('PATCH', `repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`, {
     sha: commit.sha,
     force: false
