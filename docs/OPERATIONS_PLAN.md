@@ -10,11 +10,11 @@
 | 资产 | 状态 | 说明 |
 | :--- | :--- | :--- |
 | `loongclan.xyz` 官网（英/中双语） | ✅ 在线 | Cloudflare Pages，项目名 `loongclan` |
-| `api.loongclan.xyz` 通用 API | ⚠️ 在线但**代码落后** | 线上仍为 v1.0.0，强制接收明文口令；仓库已是 SHA-256 零明文版 |
+| `api.loongclan.xyz` 通用 API | ✅ 在线（已升级） | 已部署 SHA-256 零明文版；拒绝明文口令、限流、极值阈值全部生效 |
 | `xiangqi.loongclan.xyz` 棋阵风暴 | ✅ 在线 | 独立 Pages 项目 `xiangqiblast` |
 | `hp.loongclan.xyz` 半纸诗声 | ✅ 在线 | 独立 Pages 项目 `recite` |
-| `words.loongclan.xyz` 诗藏 / 文脉 | ❌ **未部署** | 无 DNS、无 Pages 项目；官网此前直接链接导致死链 |
-| 团队协作 | ❌ 无版本控制 | 本地无 git 仓库，官网发布依赖外部镜像仓 |
+| `words.loongclan.xyz` 诗藏 / 文脉 | 🚧 未部署 | 无 DNS、无 Pages 项目；官网已改为「研发中」禁用态，死链清零 |
+| 团队协作 | ✅ 已接管 | 本地 git 仓库 + GitHub Actions 全自动发布 |
 
 ---
 
@@ -114,8 +114,39 @@
 
 | 里程碑 | 内容 | 状态 |
 | :--- | :--- | :--- |
-| M1 | 官网死链清零 + 404 + SEO | 本轮 |
-| M2 | 后端 CI/CD 打通，SHA-256 版 API 上线 | 本轮 |
-| M3 | 风控三件套（限流/阈值/零明文）上线并可验证 | 本轮 |
+| M1 | 官网死链清零 + 404 + SEO | ✅ 已完成 |
+| M2 | 后端 CI/CD 打通，SHA-256 版 API 上线 | ✅ 已完成 |
+| M3 | 风控三件套（限流/阈值/零明文）上线并可验证 | ✅ 已完成 |
 | M4 | 诗藏/文脉部署到 `words.loongclan.xyz` | 下一阶段 |
 | M5 | Privacy / Terms / Changelog 三页补齐 | 下一阶段 |
+
+
+---
+
+## 5. 本轮交付记录（2026-10-27）
+
+### 5.1 完成的改动
+
+| 类别 | 内容 |
+| :--- | :--- |
+| 后端安全 | 默认拒绝明文口令（`plaintext_kouling_rejected`）；`/rank/submit` 强制 `syncToken`；`/sync/meta` 加鉴权；`appId`/`boardId` 白名单校验；快照 1 MiB 上限 |
+| 后端风控 | `security/limits.ts`：固定窗口限流（IP + userHash 双维度）、成绩极值阈值、`rate_limits` 表、fail-open 容错 |
+| 缺陷修复 | `rank_scores.updated_at` 缺失导致刷新成绩 500；`sync_snapshots` 缺 9 列导致上传 500 |
+| 数据迁移 | `D1Store.ensureColumns()` 声明式列迁移 + Promise 缓存，兼容历史库 |
+| 网站 | 清除 `words.loongclan.xyz` 死链；新增真实 404；en/zh 双语 Organization JSON-LD + Twitter Card；sitemap 覆盖已上线子站；新增「半纸诗声」产品卡 |
+| CI/CD | `deploy-web.yml` + `deploy-api.yml`，push 即发布；后端先跑 89 项测试再部署并幂等建表 |
+| 工具 | `scripts/smoke.mjs`（25 项线上巡检）、`scripts/publish.mjs`（GitHub API 发布，含最终一致性重试） |
+| 文档 | README / DEPLOYMENT / SPEC_SYNC / SPEC_RANK 与实现对齐 |
+
+### 5.2 验证证据
+
+- 本地测试：`api.test.ts` 72 项 + `migration.test.ts` 17 项 = **89 项全通过**
+- SDK 测试：SHA-256 派生与 `node:crypto` 逐字节一致
+- 线上巡检：**25 项全通过**（官网/404/静态资源/子域/健康/零明文/上传/下载/鉴权/排行/注销）
+- GitHub Actions：`Deploy Workers API`、`Deploy Website to Cloudflare Pages` 均 success
+
+### 5.3 遗留与下一步
+
+1. `words.loongclan.xyz` 仍未部署 —— 需为其创建 Pages 项目并绑定自定义域名（代码侧已就绪，沙箱无权写该仓库）。
+2. 远端仓库存在历史遗留的 `deploy.yml`（根目录发布）。当前与 `deploy-web.yml` 并存，后者已做布局自适应；建议后续下线以免重复部署。
+3. Privacy / Terms / Changelog 三页待补。
