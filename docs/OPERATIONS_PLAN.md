@@ -142,11 +142,33 @@
 
 - 本地测试：`api.test.ts` 72 项 + `migration.test.ts` 17 项 = **89 项全通过**
 - SDK 测试：SHA-256 派生与 `node:crypto` 逐字节一致
-- 线上巡检：**25 项全通过**（官网/404/静态资源/子域/健康/零明文/上传/下载/鉴权/排行/注销）
+- 线上巡检：**37 项全通过**（官网/404/静态资源/源码防护/子域/健康/零明文/上传/下载/鉴权/排行/注销）
 - GitHub Actions：`Deploy Workers API`、`Deploy Website to Cloudflare Pages` 均 success
 
-### 5.3 遗留与下一步
+### 5.3 安全事件记录（本轮已修复）
 
-1. `words.loongclan.xyz` 仍未部署 —— 需为其创建 Pages 项目并绑定自定义域名（代码侧已就绪，沙箱无权写该仓库）。
-2. 远端仓库存在历史遗留的 `deploy.yml`（根目录发布）。当前与 `deploy-web.yml` 并存，后者已做布局自适应；建议后续下线以免重复部署。
-3. Privacy / Terms / Changelog 三页待补。
+**事件：全仓源码经官网公网可下载（P0）**
+
+- **现象**：`https://loongclan.xyz/server/src/auth/kouling.ts`、`/README.md`、`/docs/*.md`、
+  `/scripts/publish.mjs`、`/sdk/**` 等均可直接 HTTP 200 下载。
+- **根因**：远端仓库历史遗留 `.github/workflows/deploy.yml` 执行 `pages deploy .`，
+  以**仓库根目录**为站点源，导致整个代码库被当作静态资源发布。
+  叠加我早期为兼容旧布局而做的「website/ → 根目录」路径映射，进一步扩大了暴露面。
+- **修复**：
+  1. 删除遗留 `deploy.yml`；
+  2. `deploy-web.yml` 仅发布 `website/`，缺失时**硬失败**而非回退到 `.`；
+  3. `publish.mjs` 取消路径映射，远端保留真实 `website/` 目录；
+  4. 通过 `sha:null` 清理根目录所有历史静态残留。
+- **验证**：带缓存穿透参数访问上述路径均返回 **404**；`smoke.mjs` 新增 `[3b] 源码泄漏防护`
+  8 项断言，纳入每次巡检。
+- **经验**：`pages deploy .` 是危险的默认写法；任何静态托管都必须显式限定发布子目录，
+  并在 CI 中断言该目录存在。
+
+### 5.4 遗留与下一步
+
+1. `words.loongclan.xyz` 仍未部署 —— 需为其创建 Pages 项目并绑定自定义域名
+   （代码侧已就绪，但沙箱只允许写 `loongclan` 工作区，无权写 `/data/sites/words`）。
+2. ~~遗留 `deploy.yml`~~ —— 已删除。
+3. ~~Privacy / Terms~~ —— 已补齐中英双语版本。
+4. Changelog 页面待补。
+5. 建议后续为官网增加 `_headers`（CSP、X-Frame-Options）强化纵深防御。

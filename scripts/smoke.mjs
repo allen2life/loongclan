@@ -99,6 +99,24 @@ async function main() {
     ok('未知路径返回 404', res.status === 404, `status=${res.status}`);
   }
 
+  // ── 3b. 源码泄漏防护（P0 安全红线） ──
+  // 历史事故：deploy.yml 用 `pages deploy .` 把整个仓库发布成静态资源，
+  // 导致 server/ docs/ scripts/ sdk/ 全部可从公网下载。
+  console.log('\n[3b] 源码泄漏防护');
+  {
+    const forbidden = [
+      '/README.md', '/package.json', '/.gitignore',
+      '/server/wrangler.jsonc', '/server/src/auth/kouling.ts',
+      '/scripts/publish.mjs', '/sdk/ts/LoongIdentity.ts',
+      '/docs/SPEC_IDENTITY.md'
+    ];
+    for (const p of forbidden) {
+      // 附加随机参数绕过 CDN 缓存，检测真实源状态
+      const { res } = await fetchText(SITE + p + '?cb=' + Math.random().toString(36).slice(2));
+      ok(`${p} 不可公开访问`, res.status === 404, `status=${res.status}`);
+    }
+  }
+
   // ── 4. 死链检查（产品子域） ──
   console.log('\n[4] 产品子域可达性');
   for (const sub of ['https://xiangqi.loongclan.xyz/', 'https://hp.loongclan.xyz/']) {
