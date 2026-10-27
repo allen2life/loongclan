@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy · LoongClan</title>
+  <meta name="description" content="LoongClan privacy policy: we never receive your passphrase, and your data lives on your device first.">
+  <link rel="canonical" href="https://loongclan.xyz/privacy.html">
+  <link rel="alternate" hreflang="en" href="https://loongclan.xyz/privacy.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/privacy.html">
+  <meta name="robots" content="index,follow">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;900&display=swap" rel="stylesheet">
+  <style>
+    .doc {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 120px 24px 80px;
+      line-height: 1.9;
+    }
+    .doc h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      margin-bottom: 8px;
+    }
+    .doc .doc-meta {
+      color: var(--color-text-dim);
+      font-size: 0.86rem;
+      margin-bottom: 40px;
+      font-family: var(--font-mono);
+    }
+    .doc h2 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      margin: 36px 0 12px;
+      color: var(--color-gold);
+    }
+    .doc p, .doc li { color: #c0c6dc; }
+    .doc ul { padding-left: 22px; }
+    .doc li { margin: 6px 0; }
+    .doc strong { color: var(--color-text); }
+    .doc code {
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+    }
+    .doc a { color: var(--color-gold); }
+    .doc-back { display: inline-block; margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <div class="bg-texture" aria-hidden="true"></div>
+  <main class="doc">
+    <h1>Privacy Policy</h1>
+    <div class="doc-meta">Last updated: 2026-10-27 · loongclan.xyz</div>
+
+    <p>
+      LoongClan (龙族) builds offline-first cultural games and apps. Our architecture is designed so that
+      we <strong>cannot</strong> collect what we never receive. This page explains exactly what happens to your data.
+    </p>
+
+    <h2>1. Your passphrase never leaves your device</h2>
+    <p>
+      Your 3-part passphrase (<code>part1.part2.part3</code>) is your identity across all LoongClan apps.
+      It is processed <strong>entirely in your browser</strong>. We derive two hashes locally with SHA-256:
+    </p>
+    <ul>
+      <li><code>UserHash</code> — a 64-character public identifier used for leaderboards;</li>
+      <li><code>SyncToken</code> — a 64-character private credential used to authenticate sync requests.</li>
+    </ul>
+    <p>
+      Only these hashes are ever sent to our API. The plaintext passphrase is <strong>never transmitted,
+      never logged, and never stored</strong> on our servers. Requests containing a raw passphrase are rejected
+      server-side with <code>plaintext_kouling_rejected</code>.
+    </p>
+
+    <h2>2. What we store</h2>
+    <p>When you explicitly choose to upload a backup, we store:</p>
+    <ul>
+      <li>the application id (<code>appId</code>) and your <code>UserHash</code>;</li>
+      <li>your <code>SyncToken</code> hash (to verify future requests are really you);</li>
+      <li>the nickname you typed (displayed on leaderboards);</li>
+      <li>the snapshot payload you uploaded, stored verbatim as an opaque blob;</li>
+      <li>a version number and timestamps.</li>
+    </ul>
+    <p>
+      We do not interpret the contents of your payload. We do not store IP addresses in our database
+      (rate limiting keys are aggregated counters, pruned daily).
+    </p>
+
+    <h2>3. What we do not do</h2>
+    <ul>
+      <li>No accounts, no email, no phone number, no password.</li>
+      <li>No third-party analytics, advertising, or tracking scripts.</li>
+      <li>No cookies for tracking. Language preference is kept in your browser's <code>localStorage</code>.</li>
+      <li>No selling or sharing of data with third parties.</li>
+    </ul>
+
+    <h2>4. Your rights: export and erasure</h2>
+    <p>
+      Your local device is the source of truth. At any time you can:
+    </p>
+    <ul>
+      <li><strong>Export</strong> — retrieve a full JSON copy of your cloud snapshot;</li>
+      <li><strong>Purge</strong> — permanently delete your cloud snapshot and leaderboard entries.
+          This is immediate and irreversible.</li>
+    </ul>
+    <p>
+      Locally, clearing your browser storage removes everything on your device. Because your passphrase
+      is the only key, losing it means the data cannot be recovered — please back it up safely.
+    </p>
+
+    <h2>5. Leaderboards are public</h2>
+    <p>
+      If you submit a score, your <strong>nickname</strong> and <code>UserHash</code> become publicly visible on that
+      leaderboard. Your <code>SyncToken</code> is never exposed. Do not use personal information as your nickname.
+    </p>
+
+    <h2>6. Security</h2>
+    <p>
+      All traffic is served over HTTPS/TLS. Server-side we enforce rate limiting, request validation and
+      constant-time credential comparison. However, no system is perfectly secure; use a passphrase you
+      do not reuse elsewhere.
+    </p>
+
+    <h2>7. Children</h2>
+    <p>
+      Our apps are family-friendly and collect no personal information from anyone, including children.
+    </p>
+
+    <h2>8. Changes</h2>
+    <p>
+      If this policy changes, the "Last updated" date above will change. Material changes will be noted on
+      the home page.
+    </p>
+
+    <h2>9. Contact</h2>
+    <p>
+      Questions about privacy: open an issue at
+      <a href="https://github.com/allen2life/loongclan/issues" target="_blank" rel="noopener">github.com/allen2life/loongclan</a>.
+    </p>
+
+    <a class="btn-primary doc-back" href="/">← Back to Home</a>
+  </main>
+</body>
+</html>

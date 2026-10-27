@@ -86,7 +86,8 @@ async function main() {
 
   // ── 2. 静态资源 ──
   console.log('\n[2] 静态资源');
-  for (const p of ['/css/style.css', '/js/kouling-tool.js', '/js/main.js', '/robots.txt', '/sitemap.xml']) {
+  for (const p of ['/css/style.css', '/js/kouling-tool.js', '/js/main.js', '/robots.txt', '/sitemap.xml',
+                   '/privacy.html', '/terms.html', '/zh/privacy.html', '/zh/terms.html']) {
     const { res } = await fetchText(SITE + p);
     ok(`${p} 可达`, res.status === 200, `status=${res.status}`);
   }

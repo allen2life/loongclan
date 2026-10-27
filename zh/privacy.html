@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>隐私政策 · 龙族 LoongClan</title>
+  <meta name="description" content="龙族隐私政策：服务端绝不接收你的口令原文，数据首先属于你的设备。">
+  <link rel="canonical" href="https://loongclan.xyz/zh/privacy.html">
+  <link rel="alternate" hreflang="en" href="https://loongclan.xyz/privacy.html">
+  <link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/privacy.html">
+  <meta name="robots" content="index,follow">
+  <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    .doc { max-width: 780px; margin: 0 auto; padding: 120px 24px 80px; line-height: 1.95; }
+    .doc h1 { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 8px; }
+    .doc .doc-meta { color: var(--color-text-dim); font-size: 0.86rem; margin-bottom: 40px; font-family: var(--font-mono); }
+    .doc h2 { font-family: var(--font-serif); font-size: 1.2rem; margin: 36px 0 12px; color: var(--color-gold); }
+    .doc p, .doc li { color: #c0c6dc; }
+    .doc ul { padding-left: 22px; }
+    .doc li { margin: 6px 0; }
+    .doc strong { color: var(--color-text); }
+    .doc code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.9em; }
+    .doc a { color: var(--color-gold); }
+    .doc-back { display: inline-block; margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <div class="bg-texture" aria-hidden="true"></div>
+  <main class="doc">
+    <h1>隐私政策</h1>
+    <div class="doc-meta">最后更新：2026-10-27 · loongclan.xyz</div>
+
+    <p>
+      龙族（LoongClan）专注于离线优先的文化小游戏与应用。我们的架构设计原则是：<strong>我们不接收的数据，就永远不会被我们收集</strong>。本页说明你的数据究竟发生了什么。
+    </p>
+
+    <h2>一、口令永远不离开你的设备</h2>
+    <p>
+      三段式口令（<code>part1.part2.part3</code>）是你在龙族全系应用中的身份。它<strong>完全在你的浏览器内处理</strong>，本地通过 SHA-256 派生出两个散列：
+    </p>
+    <ul>
+      <li><code>UserHash</code> —— 64 位公开标识，用于排行榜；</li>
+      <li><code>SyncToken</code> —— 64 位私密凭据，用于同步请求鉴权。</li>
+    </ul>
+    <p>
+      只有这两个散列会被发送到我们的 API。口令原文<strong>绝不传输、绝不记录、绝不存储</strong>在服务器上。包含明文口令的请求会被服务端以 <code>plaintext_kouling_rejected</code> 直接拒绝。
+    </p>
+
+    <h2>二、我们存储什么</h2>
+    <p>仅当你主动选择上传备份时，我们才会存储：</p>
+    <ul>
+      <li>应用标识（<code>appId</code>）与你的 <code>UserHash</code>；</li>
+      <li>你的 <code>SyncToken</code> 散列（用于验证后续请求确实是你）；</li>
+      <li>你填写的昵称（用于排行榜展示）；</li>
+      <li>你上传的快照内容，作为不透明数据原样存储；</li>
+      <li>版本号与时间戳。</li>
+    </ul>
+    <p>
+      我们不解析你的快照内容，数据库中也<strong>不存储 IP 地址</strong>（限流仅使用聚合计数器，每日清理）。
+    </p>
+
+    <h2>三、我们不做的事</h2>
+    <ul>
+      <li>无需注册，不收邮箱、手机号，也不设密码。</li>
+      <li>不接入任何第三方统计、广告或追踪脚本。</li>
+      <li>不使用追踪 Cookie。语言偏好仅保存在你浏览器的 <code>localStorage</code>。</li>
+      <li>不出售、不共享任何数据给第三方。</li>
+    </ul>
+
+    <h2>四、你的权利：导出与注销</h2>
+    <p>你的本地设备是唯一真相源。任何时候你都可以：</p>
+    <ul>
+      <li><strong>导出</strong> —— 获取完整的云端快照 JSON；</li>
+      <li><strong>注销</strong> —— 永久删除云端快照与排行榜记录，立即生效且不可恢复。</li>
+    </ul>
+    <p>
+      清除浏览器存储即可抹除设备上的全部数据。由于口令是唯一钥匙，一旦丢失，数据将无法恢复——请务必妥善备份。
+    </p>
+
+    <h2>五、排行榜是公开的</h2>
+    <p>
+      当你提交成绩时，你的<strong>昵称</strong>与 <code>UserHash</code> 会在该榜单上公开可见。你的 <code>SyncToken</code> 绝不暴露。请勿使用真实个人信息作为昵称。
+    </p>
+
+    <h2>六、安全</h2>
+    <p>
+      全站强制 HTTPS/TLS 传输。服务端实施限流、参数校验与恒定耗时凭据比对。但没有任何系统绝对安全，请勿复用你在其他服务中的重要口令。
+    </p>
+
+    <h2>七、儿童</h2>
+    <p>我们的应用适合全年龄使用，且不向任何人（包括儿童）收集个人信息。</p>
+
+    <h2>八、政策变更</h2>
+    <p>若本政策变更，页面顶部的「最后更新」日期会同步变化，重大变更将在首页提示。</p>
+
+    <h2>九、联系我们</h2>
+    <p>
+      隐私相关问题请在
+      <a href="https://github.com/allen2life/loongclan/issues" target="_blank" rel="noopener">GitHub Issues</a> 提出。
+    </p>
+
+    <a class="btn-primary doc-back" href="/zh/">← 返回中文首页</a>
+  </main>
+</body>
+</html>
