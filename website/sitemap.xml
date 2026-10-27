@@ -26,6 +26,11 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://words.loongclan.xyz/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://loongclan.xyz/privacy</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://loongclan.xyz/privacy"/>
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://loongclan.xyz/zh/privacy"/>

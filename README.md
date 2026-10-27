@@ -174,6 +174,6 @@ npx wrangler deploy
 | :--- | :--- | :--- | :--- |
 | **《棋阵风暴》** Xiangqi Blast | 象棋战术与星宿残局单机策略 | [xiangqi.loongclan.xyz](https://xiangqi.loongclan.xyz/) | ✅ 已上线 |
 | **《半纸诗声》** Half-Page Verse | 诗词卡片打印 + 声律伴读 | [hp.loongclan.xyz](https://hp.loongclan.xyz/) | ✅ 已上线 |
-| **《诗藏》** Shizang | 经典诗词炼字与推敲解谜 | — | 🚧 研发中 |
-| **《文脉》** Wenmai | 华夏文化意象连线与归纳 | — | 🚧 研发中 |
+| **《诗藏》** Shizang | 经典诗词炼字与推敲解谜 | [words.loongclan.xyz/?mode=shizang](https://words.loongclan.xyz/?mode=shizang) | ✅ 已上线 |
+| **《文脉》** Wenmai | 华夏文化意象连线与归纳 | [words.loongclan.xyz/?mode=wenmai](https://words.loongclan.xyz/?mode=wenmai) | ✅ 已上线 |
 | **龙族通行证** LoongPass | 跨应用三维口令离线通行工具 | [loongclan.xyz](https://loongclan.xyz/) 首页内嵌 | ✅ 已上线 |

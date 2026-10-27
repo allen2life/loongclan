@@ -13,7 +13,8 @@
 | `api.loongclan.xyz` 通用 API | ✅ 在线（已升级） | 已部署 SHA-256 零明文版；拒绝明文口令、限流、极值阈值全部生效 |
 | `xiangqi.loongclan.xyz` 棋阵风暴 | ✅ 在线 | 独立 Pages 项目 `xiangqiblast` |
 | `hp.loongclan.xyz` 半纸诗声 | ✅ 在线 | 独立 Pages 项目 `recite` |
-| `words.loongclan.xyz` 诗藏 / 文脉 | 🚧 未部署 | 无 DNS、无 Pages 项目；官网已改为「研发中」禁用态，死链清零 |
+| `loongclan.xyz` 合规页 | ✅ 在线 | 中英双语 Privacy / Terms |
+| `words.loongclan.xyz` 诗藏 / 文脉 | ✅ 在线 | Pages 项目 `shizangwenmai`，React SPA + PWA，独立 CI |
 | 团队协作 | ✅ 已接管 | 本地 git 仓库 + GitHub Actions 全自动发布 |
 
 ---
@@ -22,7 +23,7 @@
 
 ### P0 · 上线阻塞项（本轮必须完成）
 
-1. **修复官网死链**：`words.loongclan.xyz` 无部署，所有指向它的入口必须改为「研发中」禁用态，避免用户点了 404。
+1. **修复官网死链**：曾因 `words.loongclan.xyz` 无部署而出现死链；该站上线后恢复真实入口，并加入巡检断言防止二次漂移。
 2. **打通后端自动发布**：新增 GitHub Actions 工作流，把仓库中已加固的 SHA-256 版 API 部署到 `api.loongclan.xyz`。
 3. **补齐风控**：实现 SPEC_RANK §3 承诺的限流与极值阈值，消除「文档承诺、代码缺失」的落差。
 4. **关闭明文后门**：服务端默认拒绝任何 `kouling` 字段，落实 P0 铁律「口令绝不离机」。
@@ -35,7 +36,7 @@
 
 ### P2 · 后续迭代（下一阶段）
 
-8. 诗藏 / 文脉正式部署到 `words.loongclan.xyz`（需先绑定 DNS 与 Pages 项目）。
+8. ~~诗藏 / 文脉部署~~ —— 已上线（Pages `shizangwenmai`）。后续仅需保持官网入口与真实状态同步。
 9. 官网增加「更新日志 / Changelog」区块，形成发布节奏感。
 10. 增加 Privacy / Terms 页面，补齐国际化产品的合规闭环。
 11. 引入 `_headers` / `_redirects` 强化安全响应头与旧路径迁移。
@@ -117,8 +118,8 @@
 | M1 | 官网死链清零 + 404 + SEO | ✅ 已完成 |
 | M2 | 后端 CI/CD 打通，SHA-256 版 API 上线 | ✅ 已完成 |
 | M3 | 风控三件套（限流/阈值/零明文）上线并可验证 | ✅ 已完成 |
-| M4 | 诗藏/文脉部署到 `words.loongclan.xyz` | 下一阶段 |
-| M5 | Privacy / Terms / Changelog 三页补齐 | 下一阶段 |
+| M4 | 诗藏/文脉部署到 `words.loongclan.xyz` | ✅ 已完成 |
+| M5 | Privacy / Terms 补齐 | ✅ 已完成（Changelog 待补） |
 
 
 ---
@@ -166,8 +167,8 @@
 
 ### 5.4 遗留与下一步
 
-1. `words.loongclan.xyz` 仍未部署 —— 需为其创建 Pages 项目并绑定自定义域名
-   （代码侧已就绪，但沙箱只允许写 `loongclan` 工作区，无权写 `/data/sites/words`）。
+1. ~~`words.loongclan.xyz` 未部署~~ —— 已由另一个 agent 上线（Pages `shizangwenmai`）。
+   本仓库已同步恢复官网入口。
 2. ~~遗留 `deploy.yml`~~ —— 已删除。
 3. ~~Privacy / Terms~~ —— 已补齐中英双语版本。
 4. Changelog 页面待补。

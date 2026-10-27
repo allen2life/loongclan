@@ -126,13 +126,41 @@ async function main() {
 
   // ── 4. 死链检查（产品子域） ──
   console.log('\n[4] 产品子域可达性');
-  for (const sub of ['https://xiangqi.loongclan.xyz/', 'https://hp.loongclan.xyz/']) {
+  for (const sub of [
+    'https://xiangqi.loongclan.xyz/',
+    'https://words.loongclan.xyz/',
+    'https://hp.loongclan.xyz/'
+  ]) {
     try {
       const { res } = await fetchText(sub);
       ok(sub + ' 可达', res.status === 200, `status=${res.status}`);
     } catch (e) {
       ok(sub + ' 可达', false, e.message);
     }
+  }
+
+  // ── 4b. 产品矩阵链接一致性 ──
+  // 防止出现「已上线却标为研发中」或「链接指向不存在的子域」
+  console.log('\n[4b] 产品矩阵链接一致性');
+  {
+    const { text } = await fetchText(SITE + '/');
+    const productLinks = [...text.matchAll(/href="(https:\/\/[a-z]+\.loongclan\.xyz[^"]*)"/g)].map((m) => m[1]);
+    const unique = [...new Set(productLinks)].filter((u) => !u.includes('api.loongclan.xyz'));
+
+    ok('产品矩阵至少包含 3 个产品入口', unique.length >= 3, `found=${unique.length}`);
+
+    for (const u of unique) {
+      try {
+        const r = await fetchText(u);
+        ok(`${u} 可达`, r.res.status === 200, `status=${r.res.status}`);
+      } catch (e) {
+        ok(`${u} 可达`, false, e.message);
+      }
+    }
+
+    // words 已上线，不应再被标记为研发中
+    const soonCount = (text.match(/btn-play--soon/g) || []).length;
+    ok('首页无残留的「研发中」禁用产品按钮', soonCount === 0, `btn-play--soon=${soonCount}`);
   }
 
   // ── 5. API 健康 ──
