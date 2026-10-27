@@ -56,7 +56,7 @@ loongclan/
 │   ├── OPERATIONS_PLAN.md             # 研发 / 运营 / 发布计划
 │   └── DEPLOYMENT.md                  # 部署指南 (Cloudflare Workers 与独立私有化)
 ├── scripts\                           # 运维脚本
-│   ├── smoke.mjs                      # 线上巡检 (37 项端到端检查)
+│   ├── smoke.mjs                      # 线上巡检 (45 项端到端检查)
 │   └── publish.mjs                    # 通过 GitHub API 发布（绕开被阻断的 git 传输）
 ├── sdk\                               # 客户端通用 SDK
 │   └── ts\                            # TypeScript SDK
@@ -156,7 +156,7 @@ node scripts/publish.mjs "feat: ..."   # 本机 git 传输被阻断，改用 Git
 
 ### 4. 发布后巡检
 ```bash
-node scripts/smoke.mjs   # 37 项线上端到端检查（官网/404/源码防护/零明文/同步/排行/注销）
+node scripts/smoke.mjs   # 45 项线上端到端检查（官网/404/源码防护/产品链接/零明文/同步/排行/注销）
 ```
 
 ### 5. 手动发布（备用）

@@ -111,16 +111,18 @@ async function main() {
       '/docs/SPEC_IDENTITY.md'
     ];
     for (const p of forbidden) {
-      // a) 源站真实状态：附加随机参数绕过 CDN 缓存
-      const bust = await fetchText(SITE + p + '?cb=' + Math.random().toString(36).slice(2));
-      ok(`[源站] ${p} 已移除`, bust.res.status === 404, `status=${bust.res.status}`);
+      // 由 website/_worker.js 在边缘统一拦截，故带/不带参数都必须是 404。
+      const direct = await fetchText(SITE + p);
+      ok(`${p} 不可公开访问`, direct.res.status === 404, `status=${direct.res.status}`);
 
-      // b) 边缘缓存状态：不带参数，反映真实用户会看到什么。
-      //    历史泄漏对象可能滞留在个别 PoP，靠 s-maxage 自然过期。
-      const edge = await fetchText(SITE + p);
-      if (edge.res.status !== 404) {
-        console.log(`  ! [边缘] ${p} 仍返回 ${edge.res.status}（陈旧缓存，待自然过期）`);
-      }
+      const bust = await fetchText(SITE + p + '?cb=' + Math.random().toString(36).slice(2));
+      ok(`${p} 绕过缓存仍不可访问`, bust.res.status === 404, `status=${bust.res.status}`);
+    }
+
+    // 大小写 / 尾斜杠 / 百分号编码等绕过变体
+    for (const p of ['/README.MD', '/README.md/', '/%52EADME.md']) {
+      const r = await fetchText(SITE + p);
+      ok(`绕过变体 ${p} 被拦截`, r.res.status === 404, `status=${r.res.status}`);
     }
   }
 
