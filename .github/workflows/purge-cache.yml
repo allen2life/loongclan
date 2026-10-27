@@ -1,0 +1,68 @@
+name: Purge Cloudflare Cache
+
+# 手动触发：清除 loongclan.xyz 的 Cloudflare 边缘缓存。
+# 用于安全修复后立即让旧的（可能已泄漏源码的）缓存响应失效，
+# 而不必等待 max-age=604800（7 天）自然过期。
+
+on:
+  workflow_dispatch:
+    inputs:
+      zone:
+        description: '要清理的域名'
+        required: false
+        default: 'loongclan.xyz'
+      everything:
+        description: '清理全部缓存（true）还是仅清理指定 URL（false）'
+        required: false
+        default: 'true'
+      urls:
+        description: '当 everything=false 时，逗号分隔的 URL 列表'
+        required: false
+        default: ''
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve zone id
+        id: zone
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ZONE_NAME: ${{ inputs.zone }}
+        run: |
+          set -euo pipefail
+          ZONE_ID=$(curl -sS -X GET "https://api.cloudflare.com/client/v4/zones?name=${ZONE_NAME}" \
+            -H "Authorization: Bearer ${CF_TOKEN}" \
+            -H "Content-Type: application/json" | jq -r '.result[0].id // empty')
+          if [ -z "$ZONE_ID" ]; then
+            echo "::error::无法解析 zone: ${ZONE_NAME}"
+            exit 1
+          fi
+          echo "zone_id=${ZONE_ID}" >> "$GITHUB_OUTPUT"
+          echo "zone: ${ZONE_NAME} -> ${ZONE_ID}"
+
+      - name: Purge cache
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ZONE_ID: ${{ steps.zone.outputs.zone_id }}
+          EVERYTHING: ${{ inputs.everything }}
+          URLS: ${{ inputs.urls }}
+        run: |
+          set -euo pipefail
+          if [ "$EVERYTHING" = "true" ]; then
+            BODY='{"purge_everything":true}'
+          else
+            JSON_URLS=$(printf '%s' "$URLS" | jq -R 'split(",") | map(gsub("^\\s+|\\s+$";"")) | map(select(length>0))')
+            BODY=$(jq -nc --argjson files "$JSON_URLS" '{files:$files}')
+          fi
+          echo "请求体: $BODY"
+          RESP=$(curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CF_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "$BODY")
+          echo "$RESP" | jq .
+          if [ "$(echo "$RESP" | jq -r '.success')" != "true" ]; then
+            echo "::error::缓存清理失败"
+            exit 1
+          fi
+          echo "✅ 缓存已清理"
