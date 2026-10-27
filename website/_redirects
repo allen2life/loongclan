@@ -1,0 +1,19 @@
+# Cloudflare Pages 路由规则
+#
+# 安全红线：本仓库只把 website/ 发布为站点。源码、内部文档、构建与运维脚本
+# 绝不可作为静态资源对外提供。以下规则在边缘直接返回 404，作为纵深防御的
+# 最后一道闸门 —— 即使将来误操作把仓库根目录纳入发布范围，这些路径也不会暴露。
+
+/README.md            /  404
+/docs/*               /  404
+/server/*             /  404
+/sdk/*                /  404
+/scripts/*            /  404
+/package.json         /  404
+/package-lock.json    /  404
+/.gitignore           /  404
+/.github/*            /  404
+/tsconfig.json        /  404
+
+# 历史扁平布局残留：统一收敛到首页
+/index.html           /  301
