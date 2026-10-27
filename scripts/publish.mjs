@@ -55,7 +55,8 @@ function ghApi(method, path, body, attempt = 0) {
  *   其余目录（server/ sdk/ docs/ scripts/ .github/）保持原样。
  */
 function mapRemotePath(localPath) {
-  if (localPath.startsWith('website/')) return localPath.slice('website/'.length);
+  // 保持仓库真实结构。禁止把 website/ 提升到根目录——
+  // 否则任何「发布仓库根目录」的工作流都会把 server/ docs/ 源码泄露到公网。
   return localPath;
 }
 
@@ -73,6 +74,18 @@ async function waitFor(fn, label, tries = 10) {
   }
 }
 
+/**
+ * 需要从远端删除的历史文件。
+ *
+ * 这些是早期「仓库根目录即站点」布局留下的静态资源。新布局把站点放在
+ * website/ 下，发布范围收窄为 website/，因此根目录副本必须清除，
+ * 否则 Cloudflare Pages 仍会以仓库根为源对外暴露整仓文件。
+ */
+const REMOTE_DELETE = [
+  'index.html', '404.html', 'privacy.html', 'terms.html',
+  'robots.txt', 'sitemap.xml',
+  'css', 'js', 'img', 'zh'
+];
 function listTrackedFiles() {
   const out = execFileSync('git', ['ls-files'], { encoding: 'utf8' });
   return out.split('\n').filter(Boolean);
@@ -132,17 +145,30 @@ async function main() {
     }
   }
 
-  // 3) 基于远端现有树创建（base_tree 保留未在本地跟踪的文件，避免误删）
+  // 3) 清理根目录历史残留（sha: null 表示从树中删除该路径）
+  const remoteRoot = ghApi('GET', `repos/${OWNER}/${REPO}/git/trees/${headCommit.tree.sha}`);
+  const rootPaths = new Set((remoteRoot.tree || []).map((e) => e.path));
+  let removed = 0;
+  for (const p of REMOTE_DELETE) {
+    if (rootPaths.has(p)) {
+      tree.push({ path: p, mode: '100644', type: 'blob', sha: null });
+      removed++;
+      console.log(`  − 删除根目录残留: ${p}`);
+    }
+  }
+  if (removed === 0) console.log('  （无根目录残留需清理）');
+
+  // 4) 基于远端现有树创建（base_tree 保留未在本地跟踪的文件，避免误删）
   const newTree = ghApi('POST', `repos/${OWNER}/${REPO}/git/trees`, {
     base_tree: headCommit.tree.sha,
     tree
   });
   console.log(`\n树已创建：${newTree.sha.slice(0, 8)}（${tree.length} 个条目）`);
 
-  // 4) 等待 tree 可被引用（GitHub git-data 存在最终一致性延迟）
+  // 5) 等待 tree 可被引用（GitHub git-data 存在最终一致性延迟）
   await waitFor(() => ghApi('GET', `repos/${OWNER}/${REPO}/git/trees/${newTree.sha}`), 'tree');
 
-  // 5) 创建提交
+  // 6) 创建提交
   const commit = ghApi('POST', `repos/${OWNER}/${REPO}/git/commits`, {
     message,
     tree: newTree.sha,
@@ -150,7 +176,7 @@ async function main() {
   });
   console.log(`提交已创建：${commit.sha.slice(0, 8)}`);
 
-  // 6) 等待 commit 可被引用，再快进分支
+  // 7) 等待 commit 可被引用，再快进分支
   await waitFor(() => ghApi('GET', `repos/${OWNER}/${REPO}/git/commits/${commit.sha}`), 'commit');
   ghApi('PATCH', `repos/${OWNER}/${REPO}/git/refs/heads/${BRANCH}`, {
     sha: commit.sha,

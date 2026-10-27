@@ -5,11 +5,6 @@ on:
     branches: [main]
     paths:
       - 'website/**'
-      - 'index.html'
-      - 'zh/**'
-      - 'css/**'
-      - 'js/**'
-      - 'img/**'
       - '.github/workflows/deploy-web.yml'
   workflow_dispatch:
 
@@ -21,24 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 兼容两种仓库布局：
-      #   A) website/ 子目录（本仓库规范布局）
-      #   B) 仓库根目录即站点（历史布局）
-      - name: Select publish directory
-        id: pick
+      # 安全红线：只允许发布 website/ 目录。
+      # 绝不回退到仓库根目录 —— 否则 server/、docs/、scripts/ 等源码会作为
+      # 静态资源被公开访问（历史事故：deploy.yml 用 `pages deploy .`）。
+      - name: Verify publish directory
         run: |
-          if [ -f website/index.html ]; then
-            echo "dir=website" >> "$GITHUB_OUTPUT"
-          elif [ -f index.html ]; then
-            echo "dir=." >> "$GITHUB_OUTPUT"
-          else
-            echo "::error::找不到网站入口 index.html"
+          if [ ! -f website/index.html ]; then
+            echo "::error::website/index.html 不存在，拒绝发布"
             exit 1
           fi
+          echo "发布目录：website/"
 
       - name: Publish
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy ${{ steps.pick.outputs.dir }} --project-name=loongclan --branch main
+          command: pages deploy website --project-name=loongclan --branch main
