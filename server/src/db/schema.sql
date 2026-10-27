@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS rank_scores (
   stars INTEGER NOT NULL DEFAULT 0,
   extra_data TEXT NOT NULL DEFAULT '',
   publish_time INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL DEFAULT 0,
   created_at INTEGER NOT NULL DEFAULT 0,
   UNIQUE(app_id, board_id, period, time_bucket, user_hash)
 );
@@ -45,6 +46,9 @@ CREATE TABLE IF NOT EXISTS rank_scores (
 CREATE INDEX IF NOT EXISTS idx_rank_query ON rank_scores (
   app_id, board_id, period, time_bucket, score DESC, publish_time ASC
 );
+
+-- 2b. 旧库迁移：补齐 updated_at 列（store.submitScore 的 UPDATE 路径依赖此列）
+--     SQLite 不支持 IF NOT EXISTS 的 ADD COLUMN，故在 server 启动时按需执行（见 store.ensureColumns）
 
 -- 3. 封禁名单 (Banned User Hashes)
 CREATE TABLE IF NOT EXISTS banned_users (

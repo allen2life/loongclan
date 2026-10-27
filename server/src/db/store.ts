@@ -63,6 +63,27 @@ export class D1Store {
     this.db = db;
   }
 
+  /**
+   * 幂等补齐历史库缺失的列。
+   *
+   * 背景：`rank_scores.updated_at` 是 submitScore UPDATE 路径依赖的列，
+   * 但早期建表语句遗漏了它。SQLite 的 ADD COLUMN 不支持 IF NOT EXISTS，
+   * 因此先查 PRAGMA table_info，缺列时才 ALTER，且容忍并发重复执行。
+   */
+  async ensureColumns(): Promise<void> {
+    try {
+      const info = await this.db.prepare('PRAGMA table_info(rank_scores)').all();
+      const cols = (info.results || []).map((r: any) => String(r.name));
+      if (cols.length > 0 && !cols.includes('updated_at')) {
+        await this.db
+          .prepare('ALTER TABLE rank_scores ADD COLUMN updated_at INTEGER NOT NULL DEFAULT 0')
+          .run();
+      }
+    } catch {
+      // 权限受限或并发执行，忽略；查询路径有兜底
+    }
+  }
+
   // ── Sync Operations ──
 
   async getSnapshot(appId: string, userHash: string): Promise<SyncRecord | null> {
@@ -212,14 +233,26 @@ export class D1Store {
       const isBetter = sortOrder === 'asc' ? record.score < existing.score : record.score > existing.score;
       if (isBetter) {
         improved = true;
-        await this.db
-          .prepare(
-            `UPDATE rank_scores
-             SET score = ?, stars = ?, nickname = ?, extra_data = ?, publish_time = ?, updated_at = ?
-             WHERE id = ?`
-          )
-          .bind(record.score, record.stars, record.nickname, record.extra_data, now, now, existing.id)
-          .run();
+        try {
+          await this.db
+            .prepare(
+              `UPDATE rank_scores
+               SET score = ?, stars = ?, nickname = ?, extra_data = ?, publish_time = ?, updated_at = ?
+               WHERE id = ?`
+            )
+            .bind(record.score, record.stars, record.nickname, record.extra_data, now, now, existing.id)
+            .run();
+        } catch {
+          // 兼容尚未补齐 updated_at 列的历史库
+          await this.db
+            .prepare(
+              `UPDATE rank_scores
+               SET score = ?, stars = ?, nickname = ?, extra_data = ?, publish_time = ?
+               WHERE id = ?`
+            )
+            .bind(record.score, record.stars, record.nickname, record.extra_data, now, existing.id)
+            .run();
+        }
       }
     } else {
       improved = true;

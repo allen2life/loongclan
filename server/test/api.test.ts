@@ -521,6 +521,34 @@ async function runTests() {
     assert(badBoard.status === 400, '非法 boardId 必须被拒绝');
   }
 
+  // Test 21: 回归 — 同一榜单二次提交（UPDATE 路径）不得 500
+  // 历史 Bug：rank_scores 缺少 updated_at 列，导致刷新成绩时 SQL 报错
+  {
+    const kh = 'update.path.zz';
+    const h = deriveUserHash(kh);
+    const t = deriveSyncToken(kh);
+    const make = (score: number) => JSON.stringify({
+      appId: 'words', boardId: 'update-path', period: 'all',
+      userHash: h, syncToken: t, nickname: 'Updater', score
+    });
+
+    const first = await app.request('/api/v1/rank/submit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: make(100)
+    }, mockEnv);
+    assert(first.status === 200, '首次提交应成功 (INSERT 路径)');
+
+    // 绕过 5 秒同账号提交间隔，专注验证 UPDATE 路径本身
+    sqlite.exec('DELETE FROM rate_limits');
+
+    const second = await app.request('/api/v1/rank/submit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: make(250)
+    }, mockEnv);
+    assert(second.status === 200, '二次刷新成绩应成功 (UPDATE 路径，历史 500 Bug 回归)');
+    const json = await second.json() as any;
+    assert(json.data?.improved === true, '更高分应标记为 improved');
+    assert(json.data?.score === 250, '刷新后的分数应为 250');
+  }
+
   console.log('───────────────────────────────────────────────────────');
   console.log(`测试完成：${passed} 项通过，${failed} 项失败。`);
   console.log('═══════════════════════════════════════════════════════');

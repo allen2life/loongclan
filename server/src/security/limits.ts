@@ -39,11 +39,19 @@ export class RateLimiter {
 
   /**
    * 固定窗口计数。返回是否放行。
-   * @param key      限流维度键（如 `ip:1.2.3.4` / `rank:submit:<hash>`）
-   * @param windowSec 窗口秒数
-   * @param maxHits   窗口内允许的最大次数
+   *
+   * 容错策略（fail-open）：限流表缺失或 SQL 异常时自动放行，
+   * 绝不让风控组件本身导致业务接口 500。表会在下一次部署建表后生效。
    */
   async hit(key: string, windowSec: number, maxHits: number): Promise<RateLimitResult> {
+    try {
+      return await this.hitUnsafe(key, windowSec, maxHits);
+    } catch {
+      return { allowed: true, retryAfterSec: 0, remaining: maxHits };
+    }
+  }
+
+  private async hitUnsafe(key: string, windowSec: number, maxHits: number): Promise<RateLimitResult> {
     const nowSec = Math.floor(Date.now() / 1000);
     const windowStart = nowSec - (nowSec % windowSec);
 
